@@ -12,7 +12,7 @@ As an example, we provide a subset of 496 predicted TMPs. TMbed predicted 4.967 
 
 ![alt-text](https://zenodo.org/api/iiif/v2/3c577630-8539-4e9e-a248-5bc7fd71ec35:7e67b846-f6c8-4df8-a3b1-c5438ea954c6:TMvis_project_overview.png/full/750,/0/default.png)
 
-Once you have the dataset ready, you can use the Jupyter notebook `TMvis.ipynb` for 3D-visualization of every protein structure in the dataset with predictions of ANVIL, PPM3, and TMbed. Additionally, you can visualize the per-residue confidence scores (pLDDT) of AlphaFold.
+Once you have the dataset ready, you can use the Jupyter notebook `TMvis.ipynb` the `TMvis` folder for 3D-visualization of every protein structure in the dataset with predictions of ANVIL, PPM3, and TMbed. Additionally, you can visualize the per-residue confidence scores (pLDDT) of AlphaFold.
 
 
 ## Running **_TMvis_** :atom::dna:
