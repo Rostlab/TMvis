@@ -39,7 +39,7 @@ See `data/` folder for details.
 Make sure that after this step, you have a folder `data/current/` containing one folder with your AlphaFold 2 structures and a text file with TMbed predictions.
 
 ### Step 4: Preprocessing and subset extraction
-Run ```python3 main.py```
+Run ```python3 ./TMvis/main.py```
 
 `main.py` will generate a `results/db` folder which contains AF structure of TMbed predicted membrane alpha/beta proteins. Additionally, `db/**/pLDDT90F1` is a subset from `db` with alpha and beta proteins selected by following criteria: 
 - Max. 2.700 base pairs long (length of one AlphaFold 2 PDB file) 
@@ -47,15 +47,15 @@ Run ```python3 main.py```
 
 ### Step 5: Predict membrane with PPM3  
 1. Unpack the docker container. See `docker/` folder for details.
-2. Run ```nextflow run run_PPM.nf -c custom.config```
+2. Run ```nextflow run ./PPM3/run_PPM3.nf -c custom.config```
 
 ### Step 6 (optional): Predict membrane with ANVIL
 Note: to run ANVIL, you need an access key.
 1. Unpack the docker container. See `docker/` folder for details on how to do that and where to get the access key.
-2. Run ```nextflow run run_anvil.nf -c custom.config```
+2. Run ```nextflow run ./ANVIL/run_anvil.nf -c custom.config```
 
 ### Step 7: Visualize TMPs in 3D     
-Run ```jupyter notebook TMvis.ipynb```
+Run ```jupyter notebook ./TMvis/TMvis.ipynb```
 
 ## References 
 1. AlphaFold - AlphaFold Jumper, John, Richard Evans, Alexander Pritzel, Tim Green, Michael Figurnov, Olaf Ronneberger, Kathryn Tunyasuvunakool, et al. 2021. “Highly Accurate Protein Structure Prediction with AlphaFold.” Nature 596 (7873): 583–89.
