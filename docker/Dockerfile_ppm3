@@ -1,0 +1,57 @@
+FROM ubuntu:20.04
+
+RUN apt update && \
+    apt install --no-install-recommends -y vim \
+                                           curl \
+                                           make \
+                                           ca-certificates \
+                                           python \
+                                           wget \
+                                           software-properties-common
+
+### SNAP INSTALLATION ###
+# Downloading gcloud package
+RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
+
+# Installing the package
+RUN curl -sSL https://sdk.cloud.google.com | bash
+
+# Adding the package path to local
+ENV PATH $PATH:/root/google-cloud-sdk/bin
+### PPM3 ###
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test & apt update
+RUN apt install -y gfortran-9
+RUN echo whereis gfortran-9
+RUN update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-9 100
+RUN update-alternatives --set gfortran /usr/bin/gfortran-9
+RUN gsutil -m cp \
+## test files
+  "gs://opm-assets/ppm3_code/1membrane.inp" \
+  "gs://opm-assets/ppm3_code/2membranes.inp" \
+#############
+  "gs://opm-assets/ppm3_code/Makefile" \
+  "gs://opm-assets/ppm3_code/deftm.f" \
+  "gs://opm-assets/ppm3_code/find_segm.f" \
+  "gs://opm-assets/ppm3_code/hbcor.f" \
+  "gs://opm-assets/ppm3_code/locate.f" \
+  "gs://opm-assets/ppm3_code/min.f" \
+  "gs://opm-assets/ppm3_code/opm.f" \
+  "gs://opm-assets/ppm3_code/orient.f" \
+  "gs://opm-assets/ppm3_code/profile.f" \
+  "gs://opm-assets/ppm3_code/read_small.f" \
+  "gs://opm-assets/ppm3_code/readpdb.f" \
+  "gs://opm-assets/ppm3_code/res.lib" \
+  "gs://opm-assets/ppm3_code/rmsd.f" \
+  "gs://opm-assets/ppm3_code/solva.f" \
+  "gs://opm-assets/ppm3_code/tilting.f" \
+  "gs://opm-assets/ppm3_code/watface.f" \
+  .
+
+# build PPM3
+RUN make
+
+# Download PDB entries from test files (optional)
+RUN wget https://files.rcsb.org/download/6ucu.pdb
+RUN wget https://files.rcsb.org/download/6jnf.pdb
+RUN wget https://files.rcsb.org/download/5v5s.pdb
+RUN wget  https://files.rcsb.org/download/5o66.pdb
