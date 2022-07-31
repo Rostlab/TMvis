@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-work_dir = "$PWD"
+work_dir = params.work_dir
 
 input_dir = "${work_dir}/results/current/db/**/pLDDT90F1/**/*.pdb"
 input_dir_alpha = "${work_dir}/results/current/db/alpha/pLDDT90F1"
@@ -25,7 +25,7 @@ process runANVIL_alpha {
                 output_path = "${input_dir_alpha}/${uniprot_id}"
 	
 		"""
-		python /MPipeline/anvil/ANVIL.py -i $pdb -af -n /MPipeline/anvil/naccess2.1.1/
+		python /TMvis/ANVIL/ANVIL.py -i $pdb -af -n /TMvis/ANVIL/naccess2.1.1/
 		"""
 }
 
@@ -43,6 +43,6 @@ process runANVIL_beta {
                 output_path = "${input_dir_beta}/${uniprot_id}"
 
                 """
-                python /MPipeline/anvil/ANVIL.py -i $pdb -af --beta -n /MPipeline/anvil/naccess2.1.1/
+                python /TMvis/ANVIL/ANVIL.py -i $pdb -af --beta -n /TMvis/ANVIL/naccess2.1.1/
                 """
 }
