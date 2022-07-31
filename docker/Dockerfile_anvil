@@ -6,10 +6,9 @@ RUN apt update && \
                                            python \
                                            wget \
 # [WARNING] will only work with open Github repositories
-RUN git clone https://github.com/stelviopas/TMPipeline.git
-RUN cd Mpipeline/anvil
+RUN git clone https://github.com/Rostlab/TMvis.git
+RUN cd TMvis/ANVIL
 RUN apt install -y fort77 csh
-
 RUN wget http://www.bioinf.manchester.ac.uk/naccess/download/naccess.tar.gz.nc.gz
 RUN unzip naccess.tar.gz.nc.gz
 # [TODO] put the activation key here after the -k argument
