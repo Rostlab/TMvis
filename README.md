@@ -18,7 +18,7 @@ Once you have the dataset ready, you can use the Jupyter notebook `TMvis.ipynb` 
 ## Running **_TMvis_** :atom::dna:
 
 ### Step 0: Clone repository
-`git clone [ADD repo link]`
+`git clone https://github.com/Rostlab/TMvis`
 
 ### Step 1: Install dependencies 
 1. Python and Python dependencies 
