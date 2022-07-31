@@ -51,7 +51,7 @@ RUN gsutil -m cp \
 RUN make
 
 # Download PDB entries from test files (optional)
-RUN wget https://files.rcsb.org/download/6ucu.pdb
-RUN wget https://files.rcsb.org/download/6jnf.pdb
-RUN wget https://files.rcsb.org/download/5v5s.pdb
-RUN wget  https://files.rcsb.org/download/5o66.pdb
+#RUN wget https://files.rcsb.org/download/6ucu.pdb
+#RUN wget https://files.rcsb.org/download/6jnf.pdb
+#RUN wget https://files.rcsb.org/download/5v5s.pdb
+#RUN wget  https://files.rcsb.org/download/5o66.pdb
