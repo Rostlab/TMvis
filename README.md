@@ -21,15 +21,10 @@ Once you have the dataset ready, you can use the Jupyter notebook `TMvis.ipynb` 
 `git clone https://github.com/Rostlab/TMvis`
 
 ### Step 1: Install dependencies 
-1. Python and Python dependencies 
+1. Python and Conda 
 ```
-tqdm
-Bio
-tarfile
-gzip
-glob
-subprocess
-statistics
+conda env create -n TMvis --file TMvis.yml    
+conda activate TMvis
 ```       
 2. Nextflow
 3. Docker
