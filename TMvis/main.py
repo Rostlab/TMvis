@@ -36,7 +36,7 @@ def get_membrane_prots(proteome_path, convert2uniprot=False, prediction_line=Tru
             middle = seq_len // 2
             prot_seq = seq_obj.seq[0:middle]
             membr_seq = seq_obj.seq[middle:seq_len]
-            # effectively check if non empty membrane prediction
+            # effectively check if non-empty membrane prediction
             if not (membr_seq == len(membr_seq) * '.') and (len(prot_seq) == len(membr_seq)):
                 not_empty += 1
                 if check_alpha_beta_signal:
@@ -74,7 +74,7 @@ def get_membrane_prots(proteome_path, convert2uniprot=False, prediction_line=Tru
             return membr_prot_IDs
 
 
-def save_membrane_prots2fasta(proteome_path="data/current/human.txt", output_path="results/current/db/alpha/{}/",
+def save_membrane_prots2fasta(proteome_path="./../data/current/human.txt", output_path="./../results/current/db/alpha/{}/",
                               exclude=None):
     # need to save fasta files in format:
     # id, sequence, prediction per protein
@@ -122,7 +122,7 @@ def getAFprots(path, convert2uniprot=False):
         return afIDs
 
 
-def extractAFpdb(path, uniprot_ids, output_dir="./results/current/db/alpha/{}"):
+def extractAFpdb(path, uniprot_ids, output_dir="./../results/current/db/alpha/{}"):
     tar = read_AFdb(path)
     af_file_names = tar.getnames()
     extract_af_file_names = []
@@ -161,9 +161,10 @@ def getMeanpLDDT(pdb):
 
 
 if __name__ == '__main__':
-    path_to_AFdb = "data/current/UP000005640_9606_HUMAN_v2.tar"
-    path_to_AF_tm_subset = "./results/current/db"
-    path_to_proteome = "data/current/human.txt"
+    root_dir = "./../"
+    path_to_AFdb = os.path.join(root_dir, "data/current/UP000005640_9606_HUMAN_v2.tar")
+    #path_to_AF_tm_subset = os.path.join(root_dir, "results/current/db")
+    path_to_proteome = os.path.join(root_dir, "data/current/human.txt")
     # read uniprotIDs from AF archive
     af_proteins = getAFprots(path_to_AFdb, convert2uniprot=True)
     # read TMbed predictions: alpha, beta and signal
@@ -190,27 +191,38 @@ if __name__ == '__main__':
             print(not_found_IDs)
 
     # separate alpha and beta to different directories
-    os.makedirs("./results/current/db/", exist_ok=True)
-    os.makedirs("./results/current/db/alpha/", exist_ok=True)
-    os.makedirs("./results/current/db/beta/", exist_ok=True)
-    save_membrane_prots2fasta(path_to_proteome, "results/current/db/alpha/{}/",
+    db_dir = os.path.join(root_dir, "results/current/db/")
+    db_alpha_dir = os.path.join(db_dir, "alpha/")
+    db_beta_dir = os.path.join(db_dir, "beta/")
+    os.makedirs(db_dir, exist_ok=True)
+    os.makedirs(db_alpha_dir, exist_ok=True)
+    os.makedirs(db_beta_dir, exist_ok=True)
+
+    # save each protein in its own folder named by Uniprot ID
+    db_alpha_ID_template = db_alpha_dir+"{}/"
+    db_beta_ID_template = db_beta_dir+"{}/"
+
+    # alpha helix ('h')
+    save_membrane_prots2fasta(path_to_proteome, db_alpha_ID_template,
                               exclude=set(list(notinAFdb) +
                                           alpha_beta_signal['s'] +
                                           alpha_beta_signal['bhs'] +
                                           alpha_beta_signal['bh'] +
                                           alpha_beta_signal['b']))
-    # beta or strand ('b')
-    os.makedirs("./results/current/db/beta/", exist_ok=True)
-    save_membrane_prots2fasta(path_to_proteome, "results/current/db/beta/{}/",
+    # beta barrel or strand ('b')
+    save_membrane_prots2fasta(path_to_proteome, db_beta_ID_template,
                               exclude=set(list(notinAFdb) +
                                           alpha_beta_signal['s'] +
                                           alpha_beta_signal['bhs'] +
                                           alpha_beta_signal['bh'] +
                                           alpha_beta_signal['hs'] +
                                           alpha_beta_signal['h']))
+
     # extract all alpha and beta proteins from the AF archive
-    extractAFpdb(path=path_to_AFdb, uniprot_ids=alpha_uniprotIDs, output_dir="./results/current/db/alpha/{}")
-    extractAFpdb(path=path_to_AFdb, uniprot_ids=beta_uniprotIDs, output_dir="./results/current/db/beta/{}")
+    extractAFpdb(path=path_to_AFdb, uniprot_ids=alpha_uniprotIDs,
+                 output_dir=db_alpha_ID_template)
+    extractAFpdb(path=path_to_AFdb, uniprot_ids=beta_uniprotIDs,
+                 output_dir=db_beta_ID_template)
 
     # subset extraction
     # only extract those AF structures which
@@ -221,11 +233,13 @@ if __name__ == '__main__':
     pLDDT90F1 = []
 
     # create directories
-    os.makedirs("./results/current/db/alpha/pLDDT90F1", exist_ok=True)
-    os.makedirs("./results/current/db/beta/pLDDT90F1", exist_ok=True)
+    alpha_plddt_dir = os.path.join(db_alpha_dir, "pLDDT90F1")
+    beta_plddt_dir = os.path.join(db_beta_dir, "pLDDT90F1")
+    os.makedirs(alpha_plddt_dir, exist_ok=True)
+    os.makedirs(beta_plddt_dir, exist_ok=True)
     # copy alpha and beta which pass F1 and pLDDT90 criteria to separate folders
     for sec_str in ['alpha', 'beta']:
-        path_to_AF_tm_subset = "./results/current/db/{}/".format(sec_str)
+        path_to_AF_tm_subset = db_dir + "{}/".format(sec_str)
         # extract IDs of one AF file proteins
         all_uniprot_ids_pdbs = [path.split('/')[-1].split('-')[1] for path in
                                 glob.glob(os.path.join(path_to_AF_tm_subset, '**/*.pdb'), recursive=True)]
@@ -242,12 +256,11 @@ if __name__ == '__main__':
                 uniprot_id = pdb.split('/')[-1].split('-')[1]
                 pLDDT90F1.append(uniprot_id)
                 try:
-                    subprocess.run(["mv", "./results/current/db/{}/{}".format(sec_str, uniprot_id), "./results/current/db/{}/pLDDT90F1".format(sec_str) + "/" + uniprot_id])
+                    subprocess.run(["mv", db_dir + '/' + sec_str + '/' + uniprot_id,
+                                    db_dir + '/' + sec_str + '/' + 'pLDDT90F1' + "/" + uniprot_id])
                 except:
-                    subprocess.run(["mkdir", "./results/current/db/{}/{}".format(sec_str, uniprot_id)])
-                    subprocess.run(["mv", "./results/current/db/{}/{}".format(sec_str, uniprot_id),
-                                    "./results/current/db/{}/pLDDT90F1".format(sec_str) + "/" + uniprot_id])
+                    subprocess.run(["mkdir", db_dir + '/' + sec_str + '/' + uniprot_id])
+                    subprocess.run(["mv", db_dir + '/' + sec_str + '/' + uniprot_id,
+                                    db_dir + '/' + sec_str + '/' + 'pLDDT90F1' + "/" + uniprot_id])
         print("mean pLDDT per {} protein > 90.0 found: ".format(sec_str), len(pLDDT90F1))
         pLDDT90F1 = []
-    # save final dataset
-    #subprocess.run(["tar", "-czvf" "db.tar.gz", "./results/current/db"])
